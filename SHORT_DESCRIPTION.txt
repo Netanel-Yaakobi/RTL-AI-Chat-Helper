@@ -1,0 +1,1 @@
+Fixes Hebrew RTL text direction in ChatGPT, Claude, and Gemini. Smart, lightweight, and fully private.

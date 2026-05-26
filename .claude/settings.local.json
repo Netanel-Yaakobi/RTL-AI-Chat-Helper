@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\ASUS\\\\Desktop\\\\פרוייקטים\\\\RTL ADDON\" -Force | Select-Object Name, FullName, @{Name='Type';Expression={if\\($_.PSIsContainer\\){'Folder'}else{'File'}}}, @{Name='Size';Expression={if\\(-not $_.PSIsContainer\\){$_.Length}else{'-'}}} | Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\ASUS\\\\Desktop\\\\פרוייקטים\\\\RTL ADDON\" -Force -Recurse | Select-Object Name, FullName, @{Name='Type';Expression={if\\($_.PSIsContainer\\){'Folder'}else{'File'}}}, @{Name='Size';Expression={if\\(-not $_.PSIsContainer\\){\"{0:N0}\" -f $_.Length}else{'-'}}} | Format-Table -AutoSize -Wrap)",
+      "PowerShell(@\\(Get-ChildItem -Path \"C:\\\\Users\\\\ASUS\\\\Desktop\\\\פרוייקטים\\\\RTL ADDON\" -Force | Where-Object { -not $_.PSIsContainer }\\) | Format-Table Name, FullName, @{Name='Size';Expression={\"{0:N0}\" -f $_.Length}}; \"`nTotal items \\(including directories\\): $\\(\\(Get-ChildItem -Path 'C:\\\\Users\\\\ASUS\\\\Desktop\\\\פרוייקטים\\\\RTL ADDON' -Force\\).Count\\)\")",
+      "PowerShell(\\(Get-Item \"C:\\\\Users\\\\ASUS\\\\Desktop\\\\פרוייקטים\\\\RTL ADDON\" -Force\\).GetFiles\\(\\) | Select-Object Name, FullName, @{Name='Size';Expression={$_.Length}})",
+      "Bash(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\ASUS\\\\Desktop\\\\פרוייקטים\\\\RTL ADDON\\\\src\")",
+      "Bash(Out-Null)",
+      "Bash(Write-Output \"src dir created\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\ASUS\\\\Desktop\\\\פרוייקטים\\\\RTL ADDON\\\\src\" && echo \"done\")",
+      "Bash(node --input-type=module)",
+      "Bash(node -e ' *)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\ASUS\\Desktop\\פרוייקטים\\RTL ADDON"
+    ]
+  }
+}

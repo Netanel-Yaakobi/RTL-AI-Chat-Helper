@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RTL AI Chat Helper</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+
+    <header class="header">
+      <h1 class="title">RTL AI Chat Helper</h1>
+      <label class="toggle-wrap" title="Enable or disable the extension">
+        <input type="checkbox" id="toggle-enabled" />
+        <span class="toggle-slider"></span>
+      </label>
+    </header>
+
+    <div class="domain-row">
+      <span class="label">Domain:</span>
+      <span id="domain-name" class="domain-value">—</span>
+    </div>
+
+    <section class="selectors-section">
+      <h2 class="section-title">Selectors</h2>
+      <ul id="selectors-list" class="selectors-list">
+        <!-- Populated by popup.js -->
+      </ul>
+    </section>
+
+    <footer class="footer">
+      <button id="btn-reset" class="btn-reset">Reset Defaults</button>
+    </footer>
+
+  </div>
+
+  <!-- defaults.js must come first so NATI_DEFAULTS is available to popup.js -->
+  <script src="defaults.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
