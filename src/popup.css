@@ -226,3 +226,56 @@ body {
   background: #f38ba8;
   color: #1e1e2e;
 }
+
+/* ── Branding / Support ──────────────────────────────────── */
+
+.branding {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #313244;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-donate {
+  background: #313244;
+  color: #cdd6f4;
+  border: 1px solid #45475a;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  letter-spacing: 0.2px;
+}
+
+.btn-donate:hover {
+  background: #cba6f7;
+  border-color: #cba6f7;
+  color: #1e1e2e;
+}
+
+.branding-credit {
+  font-size: 11px;
+  color: #585b70;
+  direction: ltr;
+  unicode-bidi: embed;
+}
+
+.branding-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 11px;
+  color: #7287fd;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+
+.branding-link:hover {
+  color: #cba6f7;
+}

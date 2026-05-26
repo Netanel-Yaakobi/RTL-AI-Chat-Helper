@@ -10,6 +10,8 @@
   const domainNameEl  = document.getElementById("domain-name");
   const selectorsList = document.getElementById("selectors-list");
   const btnReset      = document.getElementById("btn-reset");
+  const btnYaapps     = document.getElementById("btn-yaapps");
+  const btnDonate     = document.getElementById("btn-donate");
 
   // ── State ─────────────────────────────────────────────────────────────────
 
@@ -118,6 +120,14 @@
 
   toggleEnabled.addEventListener("change", () => {
     saveEnabled(toggleEnabled.checked);
+  });
+
+  btnYaapps.addEventListener("click", () => {
+    chrome.tabs.create({ url: "https://yaapps.website" });
+  });
+
+  btnDonate.addEventListener("click", () => {
+    chrome.tabs.create({ url: "https://www.paypal.com/donate/?hosted_button_id=ZD3GMUDAHXWPJ" });
   });
 
   btnReset.addEventListener("click", () => {
