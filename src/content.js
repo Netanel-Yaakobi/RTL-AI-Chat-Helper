@@ -12,6 +12,7 @@
 
   // CSS classes we add so styles can be overridden via user stylesheets if needed
   const CLASS_RTL = "nati-rtl-applied";
+  const CLASS_RTL_CONTAINER = "nati-rtl-container";
   const CLASS_LTR_CODE = "nati-ltr-code";
 
   // Elements that must always stay LTR — code areas of all kinds
@@ -23,7 +24,7 @@
 
   // How long to wait after the last DOM mutation before running a full scan.
   // Prevents excessive work during streaming AI responses.
-  const DEBOUNCE_MS = 150;
+  const DEBOUNCE_MS = 50;
 
   // Child block-level tags that we also individually check for Hebrew inside a container.
   // ul/ol included so list containers get RTL + padding fix via CSS.
@@ -134,6 +135,14 @@
         text-align: right !important;
       }
 
+      /* ── Layout container wrapper ───────────────────────────── */
+      /* Applied to matched elements that are flex/grid containers. */
+      /* Skips direction: rtl so flex item order is preserved.     */
+      /* Text children still get full RTL via nati-rtl-applied.   */
+      .nati-rtl-container {
+        unicode-bidi: plaintext !important;
+      }
+
       /* ── Code areas always LTR ──────────────────────────────── */
       .nati-ltr-code,
       .nati-ltr-code *,
@@ -171,7 +180,7 @@
   }
 
   function removeRTL(el) {
-    el.classList.remove(CLASS_RTL);
+    el.classList.remove(CLASS_RTL, CLASS_RTL_CONTAINER);
   }
 
   // CSS class handles ltr !important via .nati-ltr-code rule.
@@ -206,6 +215,19 @@
 
   // ── Core processing ───────────────────────────────────────────────────────
 
+  // Returns true if the element has block-level children (i.e. acts as a layout
+  // container rather than a leaf text node). Containers must not receive
+  // direction: rtl directly because that reverses flex/grid item order; instead
+  // they get the lightweight .nati-rtl-container class and only their text
+  // children receive the full .nati-rtl-applied treatment.
+  function isLayoutContainer(el) {
+    try {
+      return el.querySelector("p, div, ul, ol, h1, h2, h3, h4, blockquote, li") !== null;
+    } catch {
+      return false;
+    }
+  }
+
   // Decides whether to apply RTL based on the selector's mode setting.
   function shouldApplyRTL(el, mode) {
     const text = el.textContent || "";
@@ -224,7 +246,16 @@
     if (shouldSkipElement(el)) return;
 
     if (shouldApplyRTL(el, mode)) {
-      applyRTL(el);
+      if (isLayoutContainer(el)) {
+        // Flex/grid containers: apply only unicode-bidi to avoid reversing layout order.
+        // The text children below will each receive the full RTL treatment.
+        el.classList.add(CLASS_RTL_CONTAINER);
+        el.classList.remove(CLASS_RTL);
+      } else {
+        // Leaf text elements: apply full direction: rtl treatment.
+        el.classList.add(CLASS_RTL);
+        el.classList.remove(CLASS_RTL_CONTAINER);
+      }
     } else {
       removeRTL(el);
     }
@@ -323,8 +354,42 @@
 
   // ── MutationObserver ──────────────────────────────────────────────────────
 
-  // Debounce: collect rapid mutations (e.g. streaming tokens) and run one scan
-  // after DEBOUNCE_MS of quiet. Without this we'd re-scan on every token.
+  // Process a single newly-added element node immediately (no debounce).
+  // Checks whether it or any descendant matches an active selector and
+  // applies RTL right away, eliminating the visible render-then-flip jump.
+  function processAddedNode(node) {
+    if (!extensionEnabled || node.nodeType !== Node.ELEMENT_NODE) return;
+
+    for (const { selector, enabled, mode } of currentSelectors) {
+      if (!enabled) continue;
+      try {
+        if (node.matches(selector)) {
+          const tag = node.tagName.toLowerCase();
+          const isInput =
+            tag === "textarea" ||
+            (tag === "input" && node.type === "text") ||
+            node.getAttribute("contenteditable") === "true";
+          if (isInput) processInputElement(node);
+          else processElement(node, mode);
+        }
+        node.querySelectorAll(selector).forEach((el) => {
+          const tag = el.tagName.toLowerCase();
+          const isInput =
+            tag === "textarea" ||
+            (tag === "input" && el.type === "text") ||
+            el.getAttribute("contenteditable") === "true";
+          if (isInput) processInputElement(el);
+          else processElement(el, mode);
+        });
+      } catch {
+        // Invalid selector — skip silently
+      }
+    }
+  }
+
+  // Debounce: collect rapid characterData mutations (streaming tokens) and run
+  // one full scan after DEBOUNCE_MS of quiet. addedNodes are handled immediately
+  // in startObserver so they never wait for this timer.
   function debouncedScan() {
     if (debounceTimer !== null) clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
@@ -337,10 +402,22 @@
     if (observer) observer.disconnect();
 
     observer = new MutationObserver((mutations) => {
-      const relevant = mutations.some(
-        (m) => m.addedNodes.length > 0 || m.type === "characterData"
-      );
-      if (relevant) debouncedScan();
+      let hasCharData = false;
+
+      for (const mutation of mutations) {
+        if (mutation.type === "characterData") {
+          // Streaming token update — batch these through the debounce.
+          hasCharData = true;
+          continue;
+        }
+        // New elements added to the DOM — process immediately, no debounce,
+        // so RTL is applied before the browser paints the new node.
+        for (const node of mutation.addedNodes) {
+          processAddedNode(node);
+        }
+      }
+
+      if (hasCharData) debouncedScan();
     });
 
     observer.observe(document.body, {
@@ -421,8 +498,8 @@
         startObserver();
       } else {
         stopObserver();
-        // Remove all RTL we applied
-        document.querySelectorAll("." + CLASS_RTL).forEach(removeRTL);
+        // Remove all RTL we applied (both class variants)
+        document.querySelectorAll("." + CLASS_RTL + ", ." + CLASS_RTL_CONTAINER).forEach(removeRTL);
       }
     });
   }
