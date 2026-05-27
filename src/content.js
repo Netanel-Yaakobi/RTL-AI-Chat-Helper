@@ -189,7 +189,7 @@
   }
 
   // Returns true if RTL must NOT be applied to this element.
-  // Protects buttons, copy controls, toolbars, code areas, and layout containers.
+  // Protects buttons, copy controls, toolbars, code areas, and user message bubbles.
   function shouldSkipElement(el) {
     // Always skip code blocks and their contents
     if (isInsideCodeBlock(el)) return true;
@@ -209,6 +209,21 @@
 
     const ariaLabel = (el.getAttribute("aria-label") || "").toLowerCase();
     if (ariaLabel.includes("copy") || ariaLabel.includes("העתק")) return true;
+
+    // Skip elements inside user-authored message containers.
+    // Applying direction: rtl to user text triggers bidi reordering of mixed
+    // Hebrew/English content — the characters are already in the correct order
+    // as typed, so we must not interfere with them.
+    try {
+      if (el.closest(
+        '[data-author-role="user"], ' +
+        '[data-message-author-role="user"], ' +
+        '[data-is-user-message], ' +
+        '[data-testid="human-turn"], ' +
+        '[data-testid="user-message"], ' +
+        '[data-testid="user-turn"]'
+      )) return true;
+    } catch { /* ignore unusual DOM states */ }
 
     return false;
   }
