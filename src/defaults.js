@@ -1,85 +1,114 @@
-// defaults.js — single source of truth for per-domain selector configuration.
-// Loaded before content.js in the content script, and via <script> in popup.html.
-// Exposes NATI_DEFAULTS as a plain global (no ES modules needed).
+// Per-domain selector configuration.
+// Loaded before content.js in the content script and before popup.js in popup.html.
 
 const NATI_DEFAULTS = {
   "chatgpt.com": [
     {
-      // Markdown text body inside AI/user message bubbles — specific text container, not the bubble itself
       selector: "[data-message-author-role] .markdown",
       enabled: true,
+      target: "messages",
       mode: "includes"
     },
     {
-      // User message text (plain text, no markdown wrapper)
       selector: "[data-message-author-role='user'] .whitespace-pre-wrap",
       enabled: true,
+      target: "userMessages",
       mode: "includes"
     },
     {
-      // Main prompt textarea
       selector: "#prompt-textarea",
       enabled: true,
+      target: "input",
       mode: "includes"
     }
   ],
 
   "claude.ai": [
     {
-      // Confirmed assistant response body selector (found via DevTools)
       selector: ".font-claude-response-body",
       enabled: true,
+      target: "messages",
       mode: "includes"
     },
     {
-      // Substring match for the same class — catches versioned/hashed variants
       selector: "div[class*='font-claude-response-body']",
       enabled: true,
+      target: "messages",
       mode: "includes"
     },
     {
-      // Claude AI response font class (text content only)
-      selector: ".font-claude-message",
+      selector: ".standard-markdown",
       enabled: true,
+      target: "messages",
       mode: "includes"
     },
     {
-      // Prose content block (AI responses)
-      selector: ".prose",
+      selector: ".font-user-message",
       enabled: true,
+      target: "userMessages",
       mode: "includes"
     },
     {
-      // Divs with "prose" anywhere in their class list
-      selector: "div[class*='prose']",
+      selector: ".whitespace-pre-wrap.break-words",
       enabled: true,
+      target: "userMessages",
       mode: "includes"
     },
     {
-      // Main input box (contenteditable)
+      selector: "[data-testid='human-turn'], [data-testid='user-message'], [data-testid='user-turn'], [data-is-user-message]",
+      enabled: true,
+      target: "userMessages",
+      mode: "includes"
+    },
+    {
       selector: "div[contenteditable='true']",
       enabled: true,
+      target: "input",
+      mode: "includes"
+    },
+    {
+      selector: "[contenteditable], .ProseMirror",
+      enabled: true,
+      target: "input",
+      mode: "includes"
+    },
+    {
+      selector: "[data-testid='chat-input']",
+      enabled: true,
+      target: "input",
       mode: "includes"
     }
   ],
 
   "gemini.google.com": [
     {
-      // AI response markdown area
       selector: "message-content .markdown",
       enabled: true,
+      target: "messages",
       mode: "includes"
     },
     {
-      // User query text
+      selector: "message-content",
+      enabled: true,
+      target: "messages",
+      mode: "includes"
+    },
+    {
       selector: "user-query .query-text",
       enabled: true,
+      target: "messages",
       mode: "includes"
     },
     {
-      // Main input box (contenteditable inside rich-textarea)
       selector: "rich-textarea div[contenteditable='true']",
       enabled: true,
+      target: "input",
+      mode: "includes"
+    },
+    {
+      selector: "rich-textarea [contenteditable]",
+      enabled: true,
+      target: "input",
       mode: "includes"
     }
   ]

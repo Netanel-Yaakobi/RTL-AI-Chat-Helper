@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,42 +7,100 @@
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
-  <div class="container">
+  <main class="popup">
+    <section class="hero">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">RTL</div>
+          <div>
+            <h1 data-i18n="title">RTL AI Chat Helper</h1>
+            <p data-i18n="subtitle">Smart direction for AI chats</p>
+          </div>
+        </div>
 
-    <header class="header">
-      <h1 class="title">RTL AI Chat Helper</h1>
-      <label class="toggle-wrap" title="Enable or disable the extension">
-        <input type="checkbox" id="toggle-enabled" />
-        <span class="toggle-slider"></span>
-      </label>
-    </header>
+        <label class="switch switch-main" data-i18n-title="globalToggle">
+          <input type="checkbox" id="toggle-enabled" />
+          <span></span>
+        </label>
+      </header>
 
-    <div class="domain-row">
-      <span class="label">Domain:</span>
-      <span id="domain-name" class="domain-value">—</span>
-    </div>
-
-    <section class="selectors-section">
-      <h2 class="section-title">Selectors</h2>
-      <ul id="selectors-list" class="selectors-list">
-        <!-- Populated by popup.js -->
-      </ul>
+      <div class="site-card">
+        <span class="site-label" data-i18n="currentSite">Current site</span>
+        <strong id="site-name">Unknown</strong>
+        <span id="site-domain" class="site-domain">Unknown</span>
+      </div>
     </section>
 
-    <footer class="footer">
-      <button id="btn-reset" class="btn-reset">Reset Defaults</button>
-    </footer>
+    <section class="content">
+      <label class="field">
+        <span data-i18n="interfaceLanguage">Interface language</span>
+        <select id="ui-language">
+          <option value="en">English</option>
+          <option value="he">עברית</option>
+          <option value="ar">العربية</option>
+        </select>
+      </label>
 
-    <div class="branding">
-      <button id="btn-donate" class="btn-donate">&#9749; Support the project</button>
-      <p class="branding-credit">
-        Created by <button id="btn-yaapps" class="branding-link">Yaapps</button>
-      </p>
-    </div>
+      <div class="controls">
+        <label class="control">
+          <span>
+            <strong data-i18n="siteRtl">RTL on this site</strong>
+            <small data-i18n="siteRtlDesc">Use only for the current AI website.</small>
+          </span>
+          <span class="switch">
+            <input type="checkbox" id="toggle-site" />
+            <span></span>
+          </span>
+        </label>
 
-  </div>
+        <label class="control">
+          <span>
+            <strong data-i18n="inputBox">Writing box</strong>
+            <small data-i18n="inputDesc">Right-align Hebrew and Arabic while typing.</small>
+          </span>
+          <span class="switch">
+            <input type="checkbox" id="toggle-input" />
+            <span></span>
+          </span>
+        </label>
 
-  <!-- defaults.js must come first so NATI_DEFAULTS is available to popup.js -->
+        <label class="control">
+          <span>
+            <strong data-i18n="messages">Messages and replies</strong>
+            <small data-i18n="messagesDesc">Fix RTL reading in conversations.</small>
+          </span>
+          <span class="switch">
+            <input type="checkbox" id="toggle-messages" />
+            <span></span>
+          </span>
+        </label>
+
+        <div class="control locked">
+          <span>
+            <strong data-i18n="codeLTR">Code stays LTR</strong>
+            <small data-i18n="codeDesc">Code blocks are protected automatically.</small>
+          </span>
+          <em data-i18n="alwaysOn">Always on</em>
+        </div>
+      </div>
+
+      <div class="supported">
+        <span data-site="chatgpt.com">ChatGPT</span>
+        <span data-site="claude.ai">Claude</span>
+        <span data-site="gemini.google.com">Gemini</span>
+      </div>
+
+      <footer class="footer">
+        <button id="btn-reset" class="btn btn-reset" data-i18n="resetDefaults">Reset defaults</button>
+        <button id="btn-donate" class="btn btn-donate" data-i18n="supportProject">Support the project ☕</button>
+        <p class="credit">
+          <span data-i18n="createdBy">Created by</span>
+          <button id="btn-yaapps">Yaapps</button>
+        </p>
+      </footer>
+    </section>
+  </main>
+
   <script src="defaults.js"></script>
   <script src="popup.js"></script>
 </body>

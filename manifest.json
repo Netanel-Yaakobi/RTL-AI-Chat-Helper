@@ -27,7 +27,7 @@
         "*://*.claude.ai/*",
         "*://*.gemini.google.com/*"
       ],
-      "js": ["src/defaults.js", "src/content.js"],
+      "js": ["src/rtl-utils.js", "src/defaults.js", "src/content.js"],
       "run_at": "document_idle",
       "all_frames": false
     }
